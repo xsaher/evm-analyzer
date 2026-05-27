@@ -1,0 +1,588 @@
+{
+  "meta": {
+    "tool": "EVM Bytecode Security Analyzer",
+    "generated_at": "2026-05-27T11:10:28.068132+00:00",
+    "analyzer_version": "1.0.0"
+  },
+  "contract": {
+    "address": "0xbb9bc244d798123fde783fcc1c72d3bb8c189413",
+    "name": "DAO",
+    "compiler": "v0.3.1-2016-04-12-3ad5e82",
+    "verified": true
+  },
+  "analysis": {
+    "cfg_blocks": 472,
+    "cfg_edges": 322,
+    "conditional_jumps": 233,
+    "unreachable_blocks": 149,
+    "functions_detected": 46
+  },
+  "summary": {
+    "risk_level": "CRITICAL",
+    "risk_score": 515,
+    "total_findings": 32,
+    "by_severity": {
+      "CRITICAL": 2,
+      "HIGH": 5,
+      "MEDIUM": 24,
+      "LOW": 1,
+      "INFO": 0
+    }
+  },
+  "functions": [
+    {
+      "selector": "0x013cf08b",
+      "signature": "proposals(uint256)"
+    },
+    {
+      "selector": "0x095ea7b3",
+      "signature": "approve(address,uint256)"
+    },
+    {
+      "selector": "0x0c3b7b96",
+      "signature": "minTokensToCreate()"
+    },
+    {
+      "selector": "0x0e708203",
+      "signature": "rewardAccount()"
+    },
+    {
+      "selector": "0x149acf9a",
+      "signature": "daoCreator()"
+    },
+    {
+      "selector": "0x18160ddd",
+      "signature": "totalSupply()"
+    },
+    {
+      "selector": "0x1f2dc5ef",
+      "signature": "divisor()"
+    },
+    {
+      "selector": "0x21b5b8dd",
+      "signature": "extraBalance()"
+    },
+    {
+      "selector": "0x237e9492",
+      "signature": "executeProposal(uint256,bytes)"
+    },
+    {
+      "selector": "0x23b872dd",
+      "signature": "transferFrom(address,address,uint256)"
+    },
+    {
+      "selector": "0x2632bf20",
+      "signature": "unblockMe()"
+    },
+    {
+      "selector": "0x34145808",
+      "signature": "totalRewardToken()"
+    },
+    {
+      "selector": "0x39d1f908",
+      "signature": "actualBalance()"
+    },
+    {
+      "selector": "0x4b6753bc",
+      "signature": "closingTime()"
+    },
+    {
+      "selector": "0x4df6d6cc",
+      "signature": "allowedRecipients(address)"
+    },
+    {
+      "selector": "0x4e10c3ee",
+      "signature": "transferWithoutReward(address,uint256)"
+    },
+    {
+      "selector": "0x590e1ae3",
+      "signature": "refund()"
+    },
+    {
+      "selector": "0x612e45a3",
+      "signature": "newProposal(address,uint256,string,bytes,uint256,bool)"
+    },
+    {
+      "selector": "0x643f7cdd",
+      "signature": "DAOpaidOut(address)"
+    },
+    {
+      "selector": "0x674ed066",
+      "signature": "minQuorumDivisor()"
+    },
+    {
+      "selector": "0x6837ff1e",
+      "signature": "newContract(address)"
+    },
+    {
+      "selector": "0x70a08231",
+      "signature": "balanceOf(address)"
+    },
+    {
+      "selector": "0x749f9889",
+      "signature": "changeAllowedRecipients(address,bool)"
+    },
+    {
+      "selector": "0x78524b2e",
+      "signature": "halveMinQuorum()"
+    },
+    {
+      "selector": "0x81f03fcb",
+      "signature": "paidOut(address)"
+    },
+    {
+      "selector": "0x82661dc4",
+      "signature": "splitDAO(uint256,address)"
+    },
+    {
+      "selector": "0x82bf6464",
+      "signature": "DAOrewardAccount()"
+    },
+    {
+      "selector": "0x8b15a605",
+      "signature": "proposalDeposit()"
+    },
+    {
+      "selector": "0x8d7af473",
+      "signature": "numberOfProposals()"
+    },
+    {
+      "selector": "0x96d7f3f5",
+      "signature": "lastTimeMinQuorumMet()"
+    },
+    {
+      "selector": "0xa1da2fb9",
+      "signature": "retrieveDAOReward(bool)"
+    },
+    {
+      "selector": "0xa3912ec8",
+      "signature": "receiveEther()"
+    },
+    {
+      "selector": "0xa9059cbb",
+      "signature": "transfer(address,uint256)"
+    },
+    {
+      "selector": "0xb7bc2c84",
+      "signature": "isFueled()"
+    },
+    {
+      "selector": "0xbaac5300",
+      "signature": "createTokenProxy(address)"
+    },
+    {
+      "selector": "0xbe7c29c1",
+      "signature": "getNewDAOAddress(uint256)"
+    },
+    {
+      "selector": "0xc9d27afe",
+      "signature": "vote(uint256,bool)"
+    },
+    {
+      "selector": "0xcc9ae3f6",
+      "signature": "getMyReward()"
+    },
+    {
+      "selector": "0xcdef91d0",
+      "signature": "rewardToken(address)"
+    },
+    {
+      "selector": "0xdbde1988",
+      "signature": "transferFromWithoutReward(address,address,uint256)"
+    },
+    {
+      "selector": "0xdd62ed3e",
+      "signature": "allowance(address,address)"
+    },
+    {
+      "selector": "0xe33734fd",
+      "signature": "changeProposalDeposit(uint256)"
+    },
+    {
+      "selector": "0xe5962195",
+      "signature": "blocked(address)"
+    },
+    {
+      "selector": "0xe66f53b7",
+      "signature": "curator()"
+    },
+    {
+      "selector": "0xeceb2945",
+      "signature": "checkProposalCode(uint256,address,uint256,bytes)"
+    },
+    {
+      "selector": "0xf8c80d26",
+      "signature": "privateCreation()"
+    }
+  ],
+  "findings": [
+    {
+      "id": 1,
+      "severity": "HIGH",
+      "title": "Potential Reentrancy",
+      "description": "External call is made before state is updated. An attacker can re-enter the function and drain funds before the balance is recorded.",
+      "recommendation": "Follow Checks-Effects-Interactions: update state (SSTORE) before making external calls, or use a reentrancy guard.",
+      "block_offset": "0x0a9c",
+      "opcodes": [
+        "CALL",
+        "SSTORE"
+      ]
+    },
+    {
+      "id": 2,
+      "severity": "HIGH",
+      "title": "Potential Reentrancy",
+      "description": "External call is made before state is updated. An attacker can re-enter the function and drain funds before the balance is recorded.",
+      "recommendation": "Follow Checks-Effects-Interactions: update state (SSTORE) before making external calls, or use a reentrancy guard.",
+      "block_offset": "0x1492",
+      "opcodes": [
+        "CALL",
+        "SSTORE"
+      ]
+    },
+    {
+      "id": 3,
+      "severity": "HIGH",
+      "title": "User-Controlled Storage Write",
+      "description": "[Taint Analysis] SSTORE is called with a value or slot derived from user input. An attacker may be able to overwrite arbitrary storage slots.",
+      "recommendation": "Validate and sanitize all user-supplied values before writing to storage. Use Solidity 0.8+ or SafeMath.",
+      "block_offset": "0x02d0",
+      "opcodes": [
+        "SSTORE"
+      ]
+    },
+    {
+      "id": 4,
+      "severity": "HIGH",
+      "title": "User-Controlled Call Target",
+      "description": "[Taint Analysis] The destination address of a CALL is derived from user input. An attacker can redirect ETH or execution to an arbitrary contract.",
+      "recommendation": "Never use user-supplied addresses as call targets without strict validation.",
+      "block_offset": "0x0cc9",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 5,
+      "severity": "HIGH",
+      "title": "User-Controlled Storage Write",
+      "description": "[Taint Analysis] SSTORE is called with a value or slot derived from user input. An attacker may be able to overwrite arbitrary storage slots.",
+      "recommendation": "Validate and sanitize all user-supplied values before writing to storage. Use Solidity 0.8+ or SafeMath.",
+      "block_offset": "0x1578",
+      "opcodes": [
+        "SSTORE"
+      ]
+    },
+    {
+      "id": 6,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x0a9c",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 7,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x0cc9",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 8,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1040",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 9,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1492",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 10,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1578",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 11,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1733",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 12,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1900",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 13,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1a87",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 14,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1b07",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 15,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x1b7d",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 16,
+      "severity": "MEDIUM",
+      "title": "Unchecked Call Return Value",
+      "description": "CALL return value is never checked. A failed call will be silently ignored, potentially losing ETH or causing incorrect state.",
+      "recommendation": "Check the return value: (bool success,) = addr.call{value: x}(''); require(success);",
+      "block_offset": "0x21cb",
+      "opcodes": [
+        "CALL"
+      ]
+    },
+    {
+      "id": 17,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x020e",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 18,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x037f",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 19,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x0624",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 20,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x0752",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 21,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x0ba4",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 22,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x0de5",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 23,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x1240",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 24,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x1492",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 25,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x1716",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 26,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x1abc",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 27,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x1bc5",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 28,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x1cd1",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 29,
+      "severity": "MEDIUM",
+      "title": "Timestamp Dependence",
+      "description": "block.timestamp is used in a conditional branch. Miners can manipulate timestamps by up to 15 seconds to influence the outcome.",
+      "recommendation": "Avoid using block.timestamp for randomness or critical logic. Use block.number for relative timing, or Chainlink VRF for randomness.",
+      "block_offset": "0x29ee",
+      "opcodes": [
+        "TIMESTAMP",
+        "JUMPI"
+      ]
+    },
+    {
+      "id": 30,
+      "severity": "LOW",
+      "title": "Possible Integer Overflow",
+      "description": "ADD or MUL is used near state changes without bounds checks in 57 location(s). Contracts compiled before Solidity 0.8 have no built-in overflow protection.",
+      "recommendation": "Use Solidity 0.8+ which reverts on overflow by default, or SafeMath for older versions.",
+      "block_offset": "0x02d0",
+      "opcodes": [
+        "ADD",
+        "MUL"
+      ]
+    },
+    {
+      "id": 31,
+      "severity": "CRITICAL",
+      "title": "Integer Overflow Leading to Storage Corruption",
+      "description": "[Taint Analysis] An unchecked arithmetic operation on user input flows directly into SSTORE. An attacker can cause an integer overflow to manipulate storage values, potentially stealing funds or taking ownership.",
+      "recommendation": "Validate and sanitize all user-supplied values before writing to storage. Use Solidity 0.8+ or SafeMath.",
+      "block_offset": "0x0a9c",
+      "opcodes": [
+        "SSTORE"
+      ]
+    },
+    {
+      "id": 32,
+      "severity": "CRITICAL",
+      "title": "Integer Overflow Leading to Storage Corruption",
+      "description": "[Taint Analysis] An unchecked arithmetic operation on user input flows directly into SSTORE. An attacker can cause an integer overflow to manipulate storage values, potentially stealing funds or taking ownership.",
+      "recommendation": "Validate and sanitize all user-supplied values before writing to storage. Use Solidity 0.8+ or SafeMath.",
+      "block_offset": "0x264b",
+      "opcodes": [
+        "SSTORE"
+      ]
+    }
+  ]
+}
