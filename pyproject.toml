@@ -1,0 +1,19 @@
+[project]
+name = "evm-analyzer"
+version = "1.0.0"
+description = "Static security analyzer for Ethereum smart contracts — bytecode analysis, taint tracking, and vulnerability detection"
+requires-python = ">=3.9"
+dependencies = [
+    "requests==2.31.0",
+    "python-dotenv==1.0.0",
+    "networkx==3.2.1",
+    "rich==13.7.0",
+    "jinja2==3.1.3",
+    "pycryptodome==3.20.0",
+]
+
+[project.scripts]
+evm-analyzer = "main:main"
+
+[project.urls]
+Repository = "https://github.com/xsaher/evm-analyzer"

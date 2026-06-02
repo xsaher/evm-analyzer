@@ -1,5 +1,7 @@
 import sys
 import re
+import os
+import argparse
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -27,11 +29,13 @@ def is_valid_address(address: str) -> bool:
     return bool(re.match(r'^0x[0-9a-fA-F]{40}$', address))
  
  
-def analyze(contract_address: str):
+def analyze(contract_address: str, output_dir: str = "."):
     if not is_valid_address(contract_address):
         console.print(f"[red]✗ Invalid address: {contract_address}[/red]")
         console.print("[dim]Address must be 42 characters starting with 0x, e.g. 0xdAC17F958D2ee523a2206206994597C13D831ec7[/dim]")
         return None
+ 
+    os.makedirs(output_dir, exist_ok=True)
  
     console.print(Panel.fit(
         f"[bold]EVM Bytecode Security Analyzer[/bold]\n"
@@ -108,7 +112,7 @@ def analyze(contract_address: str):
             border_style="green"
         ))
  
-    base = f"report_{contract_address[:8]}"
+    base = os.path.join(output_dir, f"report_{contract_address[:8]}")
     console.print(f"\n[cyan]→[/cyan] Generating reports...")
     html_report(contract_address, findings, graph, contract_info, f"{base}.html", signatures)
     json_report(contract_address, findings, graph, contract_info, f"{base}.json", signatures)
@@ -119,12 +123,12 @@ def analyze(contract_address: str):
     return {"address": contract_address, "findings": len(findings), "base": base}
  
  
-def batch_analyze(addresses: list[str]):
+def batch_analyze(addresses: list[str], output_dir: str = "."):
     results = []
  
     for i, address in enumerate(addresses, 1):
         console.rule(f"[dim]Contract {i}/{len(addresses)}")
-        result = analyze(address)
+        result = analyze(address, output_dir)
         if result:
             results.append(result)
  
@@ -133,8 +137,8 @@ def batch_analyze(addresses: list[str]):
     summary_table.add_column("#", style="dim", width=4)
     summary_table.add_column("Address", width=45)
     summary_table.add_column("Findings", width=10)
-    summary_table.add_column("HTML", width=22)
-    summary_table.add_column("JSON", width=22)
+    summary_table.add_column("HTML", width=26)
+    summary_table.add_column("JSON", width=26)
  
     for i, r in enumerate(results, 1):
         color = "red" if r["findings"] > 0 else "green"
@@ -150,48 +154,23 @@ def batch_analyze(addresses: list[str]):
  
  
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        console.print("[red]Usage:[/red]")
-        console.print("  Single:  python main.py <address>")
-        console.print("  Batch:   python main.py <address1> <address2> ...")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        prog="evm-analyzer",
+        description="Static security analyzer for Ethereum smart contracts"
+    )
+    parser.add_argument("addresses", nargs="+", help="Contract address(es) to analyze")
+    parser.add_argument(
+        "--output-dir", "-o",
+        default=".",
+        help="Directory to save reports (default: current directory)"
+    )
  
-    addresses = sys.argv[1:]
+    args = parser.parse_args()
  
-    if len(addresses) == 1:
-        analyze(addresses[0])
+    if len(args.addresses) == 1:
+        analyze(args.addresses[0], args.output_dir)
     else:
-        batch_analyze(addresses)
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        batch_analyze(args.addresses, args.output_dir)
 
 
 
