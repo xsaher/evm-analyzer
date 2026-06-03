@@ -6,4 +6,4 @@ __pycache__/
 *.pyo
 report_*.html
 report_*.json
-.env
+
