@@ -173,5 +173,4 @@ The engine uses a worklist algorithm to traverse the CFG and supports branching 
 - [Consensys Smart Contract Best Practices](https://consensys.github.io/smart-contract-best-practices/)
 
 ---
-
-*This tool performs automated static analysis and it is demo . It does not replace a full manual security audit.*
+ "This tool is an active research prototype for automated static analysis and is not a substitute for a full manual security audit."
