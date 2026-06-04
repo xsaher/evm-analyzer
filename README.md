@@ -174,4 +174,4 @@ The engine uses a worklist algorithm to traverse the CFG and supports branching 
 
 ---
 
-*This tool performs automated static analysis. It does not replace a full manual security audit.*
+*This tool performs automated static analysis and it is demo . It does not replace a full manual security audit.*
