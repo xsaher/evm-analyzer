@@ -8,7 +8,7 @@ Built as a personal project to understand EVM internals and smart contract secur
 
 ## What makes this different
 
-Most tools like Slither and MythX require Solidity source code. This tool analyzes the compiled EVM bytecode of any deployed contract, even unverified ones. It also goes beyond simple pattern matching with inter-block taint analysis that tracks user-controlled values across the entire Control Flow Graph.
+Most tools like Slither and MythX require Solidity source code. This tool analyzes the compiled EVM bytecode of any deployed contract, even unverified ones. It goes beyond simple pattern matching with three independent analysis layers that run together on every contract.
 
 ---
 
@@ -42,6 +42,13 @@ The tool detected the exact vulnerabilities that were exploited in each attack.
 - User-controlled ETH transfer amount
 - User-controlled DELEGATECALL target
 - User-controlled SELFDESTRUCT beneficiary
+
+**Via Symbolic Execution:**
+- Confirmed user-controlled SSTORE with full value trace
+- Confirmed user-controlled CALL target with taint origin
+- Confirmed user-controlled ETH transfer amount
+- Confirmed user-controlled DELEGATECALL target
+- Confirmed user-controlled SELFDESTRUCT beneficiary
 
 **Severity Escalation:**
 - Integer overflow that flows into SSTORE → escalates to **CRITICAL**
@@ -97,6 +104,13 @@ evm-analyzer/
 │   ├── cfg_builder.py            # Basic block decomposition → Control Flow Graph
 │   ├── vulnerability_patterns.py # Pattern-based checks on the CFG
 │   └── taint_analysis.py         # Inter-block taint propagation + severity escalation
+├── symbolic_execution/
+│   ├── symbolic_value.py         # Concrete and symbolic value types
+│   ├── symbolic_stack.py         # EVM stack operating on symbolic values
+│   ├── symbolic_interpreter.py   # Opcode-level symbolic execution engine
+│   ├── symbolic_engine.py        # CFG traversal with worklist algorithm
+│   ├── symbolic_finding.py       # Finding dataclass with severity escalation
+│   └── path_state.py             # Path constraint tracking across branches
 ├── reporter/
 │   ├── html_report.py            # Self-contained HTML report
 │   └── json_report.py            # JSON output
@@ -119,14 +133,25 @@ Opcode Decoder  →  Instruction list
       ▼
 CFG Builder  →  Basic blocks + edges
       │
-      ├──→  Pattern Matching   →  Reentrancy, SELFDESTRUCT, tx.origin...
+      ├──→  Pattern Matching     →  Reentrancy, SELFDESTRUCT, tx.origin...
       │
-      └──→  Taint Analysis    →  Tracks user input across all blocks
-                                  Escalates severity when overflow hits a sink
+      ├──→  Taint Analysis       →  Tracks user input across all blocks
+      │                              Escalates severity when overflow hits a sink
+      │
+      └──→  Symbolic Execution   →  Runs every opcode with symbolic values
+                                     Confirms taint reaches dangerous sinks
       │
       ▼
 HTML + JSON Reports
 ```
+
+### Symbolic Execution
+
+The symbolic engine assigns a symbolic value to every user-controlled input — `CALLDATALOAD`, `CALLER`, `CALLVALUE`, and others. These values carry a taint origin tag that propagates through every arithmetic and logical operation across the entire CFG.
+
+When a tainted value reaches a dangerous sink (`SSTORE`, `CALL`, `DELEGATECALL`, `SELFDESTRUCT`), the engine records a confirmed finding with the full taint origin. This eliminates false positives from pattern matching alone: a finding is only reported when the data flow is proven, not just suspected.
+
+The engine uses a worklist algorithm to traverse the CFG and supports branching through `JUMPI` by recording path constraints at each conditional jump.
 
 ---
 
