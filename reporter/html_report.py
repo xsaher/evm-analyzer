@@ -35,7 +35,12 @@ def generate_report(
     for finding in findings:
         severity_counts[finding.severity] = severity_counts.get(finding.severity, 0) + 1
 
-    risk_score = severity_counts["HIGH"] * 30 + severity_counts["MEDIUM"] * 15 + severity_counts["LOW"] * 5
+    risk_score = (
+        severity_counts["CRITICAL"] * 100 +
+        severity_counts["HIGH"] * 30 +
+        severity_counts["MEDIUM"] * 15 +
+        severity_counts["LOW"] * 5
+    )
 
     if severity_counts["CRITICAL"] >= 1:
         risk_level = "CRITICAL"
@@ -53,15 +58,30 @@ def generate_report(
     risk_color = RISK_COLORS.get(risk_level, "#10B981")
     source_verified = "✓ Yes" if contract_info.get("is_verified") else "✗ No (analyzed from bytecode only)"
 
-    # build findings HTML separately to avoid nested f-strings
+    # build findings HTML
     findings_html = ""
     for idx, finding in enumerate(findings, 1):
         c = SEVERITY_COLORS.get(finding.severity, SEVERITY_COLORS["INFO"])
         block_hex = "0x{:04x}".format(finding.block_offset)
+
         opcodes_html = " ".join(
             '<code style="background:#E5E7EB;padding:2px 6px;border-radius:4px;font-size:12px">' + op + '</code>'
             for op in finding.opcodes
         )
+
+        locations_html = ""
+        if finding.locations and len(finding.locations) > 1:
+            locs = " ".join(
+                '<code style="background:#F3F4F6;padding:2px 6px;border-radius:4px;font-size:11px">' + loc + '</code>'
+                for loc in finding.locations
+            )
+            locations_html = (
+                '<div style="margin-top:8px">'
+                '<strong style="font-size:12px;color:#6B7280">ALL LOCATIONS (' + str(len(finding.locations)) + '): </strong>'
+                + locs +
+                '</div>'
+            )
+
         findings_html += (
             '<div style="border:1px solid ' + c["border"] + ';border-radius:8px;margin-bottom:16px;overflow:hidden">'
             '<div style="background:' + c["bg"] + ';padding:12px 16px;display:flex;align-items:center;gap:10px">'
@@ -73,13 +93,14 @@ def generate_report(
             '<p style="margin:0 0 10px;color:#374151;line-height:1.6"><strong>What:</strong> ' + finding.description + '</p>'
             '<p style="margin:0 0 10px;color:#374151;line-height:1.6"><strong>Fix:</strong> ' + finding.recommendation + '</p>'
             '<div style="margin-top:8px"><strong style="font-size:12px;color:#6B7280">OPCODES INVOLVED: </strong>' + opcodes_html + '</div>'
+            + locations_html +
             '</div></div>'
         )
 
     if not findings:
         findings_html = '<div style="background:#D1FAE5;border:1px solid #10B981;border-radius:8px;padding:20px;text-align:center;color:#065F46;font-size:16px">✓ No vulnerabilities detected by automated analysis.<br><small style="color:#047857">Manual review is still recommended before deployment.</small></div>'
 
-    # build functions table separately
+    # build functions table
     functions_html = ""
     if signatures:
         rows = "".join(
@@ -109,7 +130,7 @@ def generate_report(
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F9FAFB; color: #111827; }}
   .container {{ max-width: 900px; margin: 0 auto; padding: 32px 24px; }}
   .header {{ background: #111827; color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 24px; }}
-  .stat-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }}
+  .stat-grid {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }}
   .stat-card {{ background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; text-align: center; }}
   .section {{ background: white; border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; margin-bottom: 24px; }}
   h2 {{ font-size: 18px; margin-bottom: 16px; color: #111827; }}
@@ -139,16 +160,20 @@ def generate_report(
 
   <div class="stat-grid">
     <div class="stat-card">
+      <div style="font-size:28px;font-weight:700;color:#DC2626">{severity_counts['CRITICAL']}</div>
+      <div style="font-size:13px;color:#6B7280;margin-top:4px">Critical</div>
+    </div>
+    <div class="stat-card">
       <div style="font-size:28px;font-weight:700;color:#EF4444">{severity_counts['HIGH']}</div>
-      <div style="font-size:13px;color:#6B7280;margin-top:4px">High Severity</div>
+      <div style="font-size:13px;color:#6B7280;margin-top:4px">High</div>
     </div>
     <div class="stat-card">
       <div style="font-size:28px;font-weight:700;color:#F59E0B">{severity_counts['MEDIUM']}</div>
-      <div style="font-size:13px;color:#6B7280;margin-top:4px">Medium Severity</div>
+      <div style="font-size:13px;color:#6B7280;margin-top:4px">Medium</div>
     </div>
     <div class="stat-card">
       <div style="font-size:28px;font-weight:700;color:#3B82F6">{severity_counts['LOW']}</div>
-      <div style="font-size:13px;color:#6B7280;margin-top:4px">Low Severity</div>
+      <div style="font-size:13px;color:#6B7280;margin-top:4px">Low</div>
     </div>
     <div class="stat-card">
       <div style="font-size:28px;font-weight:700;color:#111827">{summary['total_blocks']}</div>
@@ -164,7 +189,8 @@ def generate_report(
       <tr style="border-bottom:1px solid #F3F4F6"><td style="padding:8px 0;color:#6B7280">Source Verified</td><td>{source_verified}</td></tr>
       <tr style="border-bottom:1px solid #F3F4F6"><td style="padding:8px 0;color:#6B7280">CFG Blocks</td><td>{summary['total_blocks']}</td></tr>
       <tr style="border-bottom:1px solid #F3F4F6"><td style="padding:8px 0;color:#6B7280">Conditional Jumps</td><td>{summary['conditional_jumps']}</td></tr>
-      <tr><td style="padding:8px 0;color:#6B7280">Unreachable Blocks</td><td>{summary['unreachable_blocks']}</td></tr>
+      <tr style="border-bottom:1px solid #F3F4F6"><td style="padding:8px 0;color:#6B7280">Unreachable Blocks</td><td>{summary['unreachable_blocks']}</td></tr>
+      <tr><td style="padding:8px 0;color:#6B7280">Risk Score</td><td style="font-weight:600;color:{risk_color}">{risk_score}</td></tr>
     </table>
   </div>
 
