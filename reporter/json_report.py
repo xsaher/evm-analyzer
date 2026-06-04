@@ -19,7 +19,12 @@ def generate_report(
     for f in findings:
         severity_counts[f.severity] += 1
 
-    risk_score = severity_counts["HIGH"] * 30 + severity_counts["MEDIUM"] * 15 + severity_counts["LOW"] * 5
+    risk_score = (
+        severity_counts["CRITICAL"] * 100 +
+        severity_counts["HIGH"] * 30 +
+        severity_counts["MEDIUM"] * 15 +
+        severity_counts["LOW"] * 5
+    )
 
     if severity_counts["CRITICAL"] >= 1:
         risk_level = "CRITICAL"
@@ -71,6 +76,7 @@ def generate_report(
                 "description": f.description,
                 "recommendation": f.recommendation,
                 "block_offset": f"0x{f.block_offset:04x}",
+                "locations": f.locations,
                 "opcodes": f.opcodes,
             }
             for i, f in enumerate(findings, 1)
