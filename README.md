@@ -70,6 +70,12 @@ python main.py 0xdAC17F958D2ee523a2206206994597C13D831ec7
 
 # Multiple contracts
 python main.py 0xdAC17F958D2ee523a2206206994597C13D831ec7 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+
+# Save reports to a specific folder
+python main.py 0xdAC17F958D2ee523a2206206994597C13D831ec7 -o ./reports
+
+# Check version
+python main.py --version
 ```
 
 Each analysis produces:
@@ -126,7 +132,7 @@ HTML + JSON Reports
 
 ## Tech Stack
 
-- Python
+- Python 3.9+
 - NetworkX — CFG construction and traversal
 - pycryptodome — keccak256 for function selector resolution
 - Requests — Etherscan API
