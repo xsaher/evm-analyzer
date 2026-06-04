@@ -39,19 +39,20 @@ def build_cfg(instructions: list[Instruction]) -> nx.DiGraph:
     block_starts = sorted(block_starts)
 
     # --- Step 2: Group instructions into basic blocks ---
-    offset_to_inst = {inst.offset: inst for inst in instructions}
-    all_offsets = [inst.offset for inst in instructions]
+    # O(1) lookup: offset -> index in instructions list
+    offset_to_idx = {inst.offset: idx for idx, inst in enumerate(instructions)}
+    block_starts_set = set(block_starts)
 
     def get_block_instructions(start_offset: int) -> list[Instruction]:
         """Collect all instructions belonging to this basic block."""
         block = []
-        i = all_offsets.index(start_offset) if start_offset in all_offsets else -1
+        i = offset_to_idx.get(start_offset, -1)
         if i == -1:
             return block
         while i < len(instructions):
             inst = instructions[i]
             # Stop if we hit the next block's start (and it's not our first instruction)
-            if inst.offset != start_offset and inst.offset in block_starts:
+            if inst.offset != start_offset and inst.offset in block_starts_set:
                 break
             block.append(inst)
             if inst.name in BLOCK_ENDERS:
@@ -65,6 +66,8 @@ def build_cfg(instructions: list[Instruction]) -> nx.DiGraph:
             graph.add_node(start, instructions=block_insts)
 
     # --- Step 3: Add edges between blocks ---
+    block_starts_indexed = {start: idx for idx, start in enumerate(block_starts)}
+
     for start in block_starts:
         if start not in graph.nodes:
             continue
@@ -73,6 +76,7 @@ def build_cfg(instructions: list[Instruction]) -> nx.DiGraph:
             continue
 
         last_inst = block_insts[-1]
+        idx = block_starts_indexed[start]
 
         if last_inst.name == "JUMP":
             # Unconditional jump — target is determined at runtime
@@ -85,14 +89,12 @@ def build_cfg(instructions: list[Instruction]) -> nx.DiGraph:
             # 2. Fall through to next instruction
             graph.nodes[start]["jump_type"] = "conditional"
             # Add fall-through edge to the next block
-            idx = block_starts.index(start)
             if idx + 1 < len(block_starts):
                 next_start = block_starts[idx + 1]
                 graph.add_edge(start, next_start, edge_type="fall_through")
 
         elif last_inst.name not in {"STOP", "RETURN", "REVERT", "INVALID", "SELFDESTRUCT"}:
             # Normal fall-through — goes to next block sequentially
-            idx = block_starts.index(start)
             if idx + 1 < len(block_starts):
                 next_start = block_starts[idx + 1]
                 graph.add_edge(start, next_start, edge_type="sequential")
