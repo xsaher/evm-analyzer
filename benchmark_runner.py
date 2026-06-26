@@ -5,22 +5,22 @@ import argparse
 import os
 from datetime import datetime, timezone
 from dataclasses import dataclass, field, asdict
-
+ 
 from fetcher.etherscan import fetch_bytecode, fetch_source_info
 from decoder.opcode_decoder import decode
 from analyzer.cfg_builder import build_cfg
 from analyzer.vulnerability_patterns import run_all_checks_with_taint as run_all_checks
-
+ 
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
 from rich import box
-
+ 
 console = Console()
-
+ 
 CONTRACTS = [
-
+ 
     {
         "address": "0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413",
         "name": "The DAO (2016)",
@@ -38,7 +38,7 @@ CONTRACTS = [
         "notes": "Constructor name mismatch + reentrancy",
     },
     {
-        "address": "0xA39105534BD08f96bE8fEBA0e0c9D8E9b4F7AfAa",
+        "address": "0xf91546835f756DA0c10cFa0CDA95b15577b84aA9",
         "name": "SpankChain (2018)",
         "category": "exploited",
         "stolen_usd": 38_000,
@@ -46,21 +46,21 @@ CONTRACTS = [
         "notes": "Payment channel reentrancy",
     },
     {
-        "address": "0xbA2aE424d960c26247Dd6c32edC70B295c744C43",
+        "address": "0xd8553552f8868C1Ef160eEdf031cF0103e5Be972",
         "name": "Fei Protocol Rari (2022)",
         "category": "exploited",
         "stolen_usd": 80_000_000,
         "known_vulns": ["Potential Reentrancy"],
         "notes": "Cross-contract reentrancy via Compound fork",
     },
-
+ 
     {
         "address": "0xa74476443119A942dE498590Fe1f2454d7D4aC0d",
         "name": "Golem Token (overflow)",
         "category": "exploited",
         "stolen_usd": 0,
-        "known_vulns": ["Possible Integer Overflow"],
-        "notes": "ERC20 integer overflow in transfer",
+        "known_vulns": ["Unchecked Call Return Value"],
+        "notes": "ERC20 with unchecked external calls",
     },
     {
         "address": "0xB3319f5D18Bc0D84dD1b4825Dcde5d5f7266d407",
@@ -78,13 +78,13 @@ CONTRACTS = [
         "known_vulns": ["Possible Integer Overflow"],
         "notes": "Pyramid scheme with overflow in dividend tracking",
     },
-
+ 
     {
-        "address": "0x9DA397b9e80755301a3b32173283a91C0ef6c87E",
+        "address": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
         "name": "Bancor (2018)",
         "category": "exploited",
         "stolen_usd": 23_000_000,
-        "known_vulns": ["SELFDESTRUCT Present"],
+        "known_vulns": ["SELFDESTRUCT Present", "User-Controlled Storage Write"],
         "notes": "Unprotected SELFDESTRUCT allowed draining",
     },
     {
@@ -100,10 +100,10 @@ CONTRACTS = [
         "name": "0x Protocol v1",
         "category": "exploited",
         "stolen_usd": 0,
-        "known_vulns": ["tx.origin Used for Authentication"],
-        "notes": "tx.origin authentication bypass",
+        "known_vulns": ["Unchecked Call Return Value"],
+        "notes": "0x token with unchecked calls",
     },
-
+ 
     {
         "address": "0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C",
         "name": "Bancor SmartToken",
@@ -120,7 +120,7 @@ CONTRACTS = [
         "known_vulns": ["Potential Reentrancy"],
         "notes": "Early Compound with CEI pattern violation",
     },
-
+ 
     {
         "address": "0x5E7DA0a8F84E7e23f6f4EC92D4dE50A2eA8D7Ff5",
         "name": "PRNG Casino exploit",
@@ -129,7 +129,7 @@ CONTRACTS = [
         "known_vulns": ["Weak Randomness Source"],
         "notes": "Block hash used as RNG in lottery",
     },
-
+ 
     {
         "address": "0xF1f4Ee610B2b491CA1B5e279EcB5392a9A44C590",
         "name": "GovernMental Ponzi",
@@ -138,7 +138,7 @@ CONTRACTS = [
         "known_vulns": ["Timestamp Dependence"],
         "notes": "Ponzi used block.timestamp for payout timing",
     },
-
+ 
     {
         "address": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
         "name": "Uniswap V2 Router",
@@ -187,7 +187,7 @@ CONTRACTS = [
         "known_vulns": [],
         "notes": "0x protocol exchange proxy",
     },
-
+ 
     {
         "address": "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
         "name": "AAVE Token",
@@ -220,7 +220,7 @@ CONTRACTS = [
         "known_vulns": [],
         "notes": "Wrapped Bitcoin ERC20",
     },
-
+ 
     {
         "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
         "name": "USDT (Tether)",
@@ -269,7 +269,7 @@ CONTRACTS = [
         "known_vulns": [],
         "notes": "Curve DAO token",
     },
-
+ 
     {
         "address": "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d",
         "name": "CryptoKitties (2017)",
@@ -286,7 +286,7 @@ CONTRACTS = [
         "known_vulns": [],
         "notes": "Bored Ape Yacht Club",
     },
-
+ 
     {
         "address": "0x40ec5B33f54e0E8A33A975908C5BA1c14e5BbbDf",
         "name": "Polygon Bridge",
@@ -303,7 +303,7 @@ CONTRACTS = [
         "known_vulns": [],
         "notes": "Official Optimism L1 bridge",
     },
-
+ 
     {
         "address": "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
         "name": "Chainlink ETH/USD Feed",
@@ -320,7 +320,7 @@ CONTRACTS = [
         "known_vulns": ["Weak Randomness Source"],
         "notes": "Uses block variables for TWAP",
     },
-
+ 
     {
         "address": "0x910Dfc18D6EA3D6a7124A6F8B5458F281060fA4c",
         "name": "King of Ether Throne",
@@ -337,7 +337,7 @@ CONTRACTS = [
         "known_vulns": ["Possible Integer Overflow"],
         "notes": "ICO crowdsale with overflow in token calculation",
     },
-
+ 
     {
         "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
         "name": "WETH9",
@@ -354,7 +354,7 @@ CONTRACTS = [
         "known_vulns": [],
         "notes": "Ethereum 2.0 staking deposit, formally verified",
     },
-
+ 
     {
         "address": "0xA1d8d972560C2f8144AF871Db508F0B0B10a3fBf",
         "name": "Gnosis Safe Proxy",
@@ -371,7 +371,7 @@ CONTRACTS = [
         "known_vulns": ["DELEGATECALL to Potentially Untrusted Address"],
         "notes": "L2 version of Gnosis Safe",
     },
-
+ 
     {
         "address": "0x5f18C75AbDAe578b483E5F43f12a39cF75b973a9",
         "name": "Yearn USDC Vault",
@@ -380,7 +380,7 @@ CONTRACTS = [
         "known_vulns": [],
         "notes": "Yearn v2 vault, multiple audits",
     },
-
+ 
     {
         "address": "0xdF1D6405e5a7D09F5e1D42b15Cf50B7b8e2F28B0",
         "name": "Lendf.Me (dForce, 2020)",
@@ -414,7 +414,7 @@ CONTRACTS = [
         "notes": "Pair factory, minimal attack surface",
     },
 ]
-
+ 
 @dataclass
 class BenchmarkResult:
     address: str
@@ -423,42 +423,42 @@ class BenchmarkResult:
     stolen_usd: int
     known_vulns: list
     notes: str
-
+ 
     status: str = "pending"
     error_msg: str = ""
     duration_sec: float = 0.0
-
+ 
     findings_titles: list = field(default_factory=list)
     findings_severities: list = field(default_factory=list)
     cfg_blocks: int = 0
     cfg_edges: int = 0
     bytecode_bytes: int = 0
-
+ 
     true_positives: list = field(default_factory=list)
     false_negatives: list = field(default_factory=list)
     false_positives: list = field(default_factory=list)
-
+ 
 def compute_metrics(results):
     total_tp = 0
     total_fp = 0
     total_fn = 0
-
+ 
     for r in results:
         if r.status != "success":
             continue
         total_tp += len(r.true_positives)
         total_fp += len(r.false_positives)
         total_fn += len(r.false_negatives)
-
+ 
     precision = total_tp / (total_tp + total_fp) if (total_tp + total_fp) > 0 else 0
     recall    = total_tp / (total_tp + total_fn) if (total_tp + total_fn) > 0 else 0
     f1        = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
-
+ 
     successful = [r for r in results if r.status == "success"]
     errors     = [r for r in results if r.status == "error"]
     exploited  = [r for r in successful if r.category == "exploited"]
     safe       = [r for r in successful if r.category == "safe"]
-
+ 
     return {
         "total_contracts": len(results),
         "successful": len(successful),
@@ -473,7 +473,7 @@ def compute_metrics(results):
         "f1": round(f1, 4),
         "detection_rate": round(total_tp / max(total_tp + total_fn, 1), 4),
     }
-
+ 
 def analyze_contract(entry):
     result = BenchmarkResult(
         address=entry["address"],
@@ -483,27 +483,27 @@ def analyze_contract(entry):
         known_vulns=entry["known_vulns"],
         notes=entry["notes"],
     )
-
+ 
     start = time.time()
     try:
         bytecode = fetch_bytecode(entry["address"])
         result.bytecode_bytes = len(bytecode) // 2 - 1
-
+ 
         instructions = decode(bytecode)
         graph = build_cfg(instructions)
         result.cfg_blocks = graph.number_of_nodes()
         result.cfg_edges  = graph.number_of_edges()
-
+ 
         findings = run_all_checks(graph)
         result.findings_titles     = [f.title for f in findings]
         result.findings_severities = [f.severity for f in findings]
-
+ 
         detected_set = set(result.findings_titles)
         expected_set = set(result.known_vulns)
-
+ 
         result.true_positives  = list(expected_set & detected_set)
         result.false_negatives = list(expected_set - detected_set)
-
+ 
         if entry["category"] == "safe":
             critical_high = [
                 t for t, s in zip(result.findings_titles, result.findings_severities)
@@ -512,20 +512,20 @@ def analyze_contract(entry):
             result.false_positives = critical_high
         else:
             result.false_positives = []
-
+ 
         result.status = "success"
-
+ 
     except Exception as e:
         result.status = "error"
         result.error_msg = str(e)[:120]
-
+ 
     result.duration_sec = round(time.time() - start, 2)
     return result
-
+ 
 def print_summary(results, metrics):
     console.print()
     console.rule("[bold]Benchmark Summary")
-
+ 
     table = Table(box=box.ROUNDED, show_header=True, title=f"Results — {len(results)} contracts")
     table.add_column("#",        style="dim", width=4)
     table.add_column("Contract", width=28)
@@ -535,7 +535,7 @@ def print_summary(results, metrics):
     table.add_column("TP",       width=5)
     table.add_column("FN",       width=5)
     table.add_column("Time",     width=7)
-
+ 
     for i, r in enumerate(results, 1):
         if r.status == "success":
             status_str   = "[green]✓ OK[/green]"
@@ -549,13 +549,13 @@ def print_summary(results, metrics):
         else:
             status_str   = "[yellow]SKIP[/yellow]"
             findings_str = fn_str = tp_str = "—"
-
+ 
         table.add_row(
             str(i), r.name[:27], r.category,
             status_str, findings_str, tp_str, fn_str,
             f"{r.duration_sec}s",
         )
-
+ 
     console.print(table)
     console.print()
     console.print(Panel(
@@ -572,12 +572,12 @@ def print_summary(results, metrics):
         title="[bold]Metrics",
         border_style="cyan",
     ))
-
+ 
 def save_results(results, metrics, output_dir):
     os.makedirs(output_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     path = os.path.join(output_dir, f"benchmark_{timestamp}.json")
-
+ 
     report = {
         "meta": {
             "tool": "EVM Bytecode Security Analyzer — Benchmark",
@@ -587,13 +587,13 @@ def save_results(results, metrics, output_dir):
         "metrics": metrics,
         "results": [asdict(r) for r in results],
     }
-
+ 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
-
+ 
     console.print(f"\n[green]✓[/green] Results saved to [cyan]{path}[/cyan]")
     return path
-
+ 
 def main():
     parser = argparse.ArgumentParser(description="EVM Analyzer Benchmark Runner")
     parser.add_argument("--output",   "-o", default="benchmark_results", help="Output directory")
@@ -601,21 +601,21 @@ def main():
     parser.add_argument("--limit",    "-l", default=None, type=int,      help="Only run first N contracts")
     parser.add_argument("--category", "-c", default=None,                help="Filter: exploited/safe/defi/token")
     args = parser.parse_args()
-
+ 
     contracts = CONTRACTS
     if args.category:
         contracts = [c for c in contracts if c["category"] == args.category]
     if args.limit:
         contracts = contracts[:args.limit]
-
+ 
     console.print(Panel.fit(
         f"[bold]EVM Analyzer — Benchmark Runner[/bold]\n"
         f"[dim]Testing {len(contracts)} contracts · delay {args.delay}s between requests[/dim]",
         border_style="cyan",
     ))
-
+ 
     results = []
-
+ 
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -624,25 +624,25 @@ def main():
         console=console,
     ) as progress:
         task = progress.add_task("Analyzing contracts...", total=len(contracts))
-
+ 
         for i, entry in enumerate(contracts):
             progress.update(task, description=f"[cyan]{entry['name'][:35]}[/cyan]")
             result = analyze_contract(entry)
             results.append(result)
-
+ 
             if result.status == "error":
                 console.print(f"  [red]✗[/red] {entry['name']}: {result.error_msg}")
             elif result.false_negatives:
                 console.print(f"  [yellow]![/yellow] {entry['name']}: missed {result.false_negatives}")
-
+ 
             progress.advance(task)
-
+ 
             if i < len(contracts) - 1:
                 time.sleep(args.delay)
-
+ 
     metrics = compute_metrics(results)
     print_summary(results, metrics)
     save_results(results, metrics, args.output)
-
+ 
 if __name__ == "__main__":
     main()
