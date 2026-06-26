@@ -12,6 +12,32 @@ Most tools like Slither and MythX require Solidity source code. This tool analyz
 
 ---
 
+## Benchmark
+
+Tested on 50 real contracts across 4 categories: historically exploited contracts, major DeFi protocols, ERC20 tokens, and formally verified safe contracts.
+
+| Metric | Score |
+|---|---|
+| Contracts Analyzed | 50 |
+| Exploited Contracts | 18 |
+| True Positives | — |
+| False Negatives | — |
+| Precision | — |
+| Recall | — |
+| F1 Score | — |
+
+Run the benchmark:
+
+```bash
+python benchmark_runner.py
+
+python benchmark_runner.py --category exploited
+
+python benchmark_runner.py --limit 10
+```
+
+---
+
 ## Tested on Real Exploited Contracts
 
 | Contract | Stolen | Tool Result | Key Finding |
@@ -97,24 +123,25 @@ Each analysis produces:
 ```
 evm-analyzer/
 ├── fetcher/
-│   └── etherscan.py              # Bytecode, ABI, metadata from Etherscan API
+│   └── etherscan.py
 ├── decoder/
-│   └── opcode_decoder.py         # Raw hex → decoded instruction list
+│   └── opcode_decoder.py
 ├── analyzer/
-│   ├── cfg_builder.py            # Basic block decomposition → Control Flow Graph
-│   ├── vulnerability_patterns.py # Pattern-based checks on the CFG
-│   └── taint_analysis.py         # Inter-block taint propagation + severity escalation
+│   ├── cfg_builder.py
+│   ├── vulnerability_patterns.py
+│   └── taint_analysis.py
 ├── symbolic_execution/
-│   ├── symbolic_value.py         # Concrete and symbolic value types
-│   ├── symbolic_stack.py         # EVM stack operating on symbolic values
-│   ├── symbolic_interpreter.py   # Opcode-level symbolic execution engine
-│   ├── symbolic_engine.py        # CFG traversal with worklist algorithm
-│   ├── symbolic_finding.py       # Finding dataclass with severity escalation
-│   └── path_state.py             # Path constraint tracking across branches
+│   ├── symbolic_value.py
+│   ├── symbolic_stack.py
+│   ├── symbolic_interpreter.py
+│   ├── symbolic_engine.py
+│   ├── symbolic_finding.py
+│   └── path_state.py
 ├── reporter/
-│   ├── html_report.py            # Self-contained HTML report
-│   └── json_report.py            # JSON output
-└── main.py                       # CLI entry point
+│   ├── html_report.py
+│   └── json_report.py
+├── benchmark_runner.py
+└── main.py
 ```
 
 ---
@@ -173,4 +200,5 @@ The engine uses a worklist algorithm to traverse the CFG and supports branching 
 - [Consensys Smart Contract Best Practices](https://consensys.github.io/smart-contract-best-practices/)
 
 ---
- "This tool is an active research prototype for automated static analysis and is not a substitute for a full manual security audit."
+
+*This tool is an active research prototype for automated static analysis and is not a substitute for a full manual security audit.*
